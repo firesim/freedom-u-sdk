@@ -1,0 +1,15 @@
+#!/bin/sh
+# devtmpfs does not get automounted for initramfs
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+/bin/mount -t devtmpfs devtmpfs /dev
+mount -t proc none /proc
+mount -t sysfs none /sys
+exec 0</dev/console
+exec 1>/dev/console
+exec 2>/dev/console
+mount -t ext4 /dev/vda /mnt
+cd /mnt
+mount --move /sys /mnt/sys
+mount --move /proc /mnt/proc
+mount --move /dev /mnt/dev
+exec switch_root -c /dev/console /mnt sbin/init
